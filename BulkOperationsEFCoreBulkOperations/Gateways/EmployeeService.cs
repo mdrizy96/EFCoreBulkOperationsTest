@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace BulkOperationsEFCoreBulkOperations.Gateways
 {
-    public class EmployeeService: IEmployeeService
+    public class EmployeeService : IEmployeeService
     {
         private readonly AppDbContext _appDbContext;
-        private DateTime Start;
-        private TimeSpan TimeSpan;
+        private DateTime _start;
+        private TimeSpan _timeSpan;
         //The "duration" variable contains Execution time when we doing the operations (Insert,Update,Delete)
 
         public EmployeeService(AppDbContext appDbContext)
@@ -24,9 +24,9 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
 
         public async Task<TimeSpan> AddBulkDataAsync()
         {
-            List<Employee> employees = new List<Employee>();
-            Start = DateTime.Now;
-            for (int i = 0; i < 100000; i++)
+            var employees = new List<Employee>();
+            _start = DateTime.Now;
+            for (var i = 0; i < 100000; i++)
             {
                 employees.Add(new Employee()
                 {
@@ -36,8 +36,8 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
                 });
             }
             await _appDbContext.BulkInsertAsync(employees);
-            TimeSpan = DateTime.Now - Start;
-            return TimeSpan;
+            _timeSpan = DateTime.Now - _start;
+            return _timeSpan;
         }
 
         #endregion Add Bulk Data
@@ -46,9 +46,9 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
 
         public async Task<TimeSpan> UpdateBulkDataAsync()
         {
-            List<Employee> employees = new List<Employee>();
-            Start = DateTime.Now;
-            for (int i = 0; i < 100000; i++)
+            var employees = new List<Employee>();
+            _start = DateTime.Now;
+            for (var i = 0; i < 100000; i++)
             {
                 employees.Add(new Employee()
                 {
@@ -59,8 +59,8 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
                 });
             }
             await _appDbContext.BulkUpdateAsync(employees);
-            TimeSpan = DateTime.Now - Start;
-            return TimeSpan;
+            _timeSpan = DateTime.Now - _start;
+            return _timeSpan;
         }
 
         #endregion Update Bulk Data
@@ -69,12 +69,11 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
 
         public async Task<TimeSpan> DeleteBulkDataAsync()
         {
-            List<Employee> employees = new List<Employee>();
-            Start = DateTime.Now;
-            employees = _appDbContext.Employees.ToList();
+            _start = DateTime.Now;
+            var employees = _appDbContext.Employees.ToList();
             await _appDbContext.BulkDeleteAsync(employees);
-            TimeSpan = DateTime.Now - Start;
-            return TimeSpan;
+            _timeSpan = DateTime.Now - _start;
+            return _timeSpan;
         }
 
         #endregion Delete Bulk Data

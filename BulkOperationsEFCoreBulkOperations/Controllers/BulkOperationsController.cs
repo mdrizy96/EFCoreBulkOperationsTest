@@ -15,21 +15,21 @@ namespace BulkOperationsEFCoreBulkOperations.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpPost(nameof(AddBulkData))]
+        [HttpPost]
         public async Task<IActionResult> AddBulkData()
         {
             var response = await _employeeService.AddBulkDataAsync();
             return Ok(response);
         }
 
-        [HttpPut(nameof(UpdateBulkData))]
+        [HttpPut]
         public async Task<IActionResult> UpdateBulkData()
         {
             var response = await _employeeService.UpdateBulkDataAsync();
             return Ok(response);
         }
 
-        [HttpDelete(nameof(DeleteBulkData))]
+        [HttpDelete]
         public async Task<IActionResult> DeleteBulkData()
         {
             var response = await _employeeService.DeleteBulkDataAsync();

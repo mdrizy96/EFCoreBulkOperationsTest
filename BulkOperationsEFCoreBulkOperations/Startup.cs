@@ -21,7 +21,7 @@ namespace BulkOperationsEFCoreBulkOperations
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("AppConnectionString")));
+            services.AddDbContext<AppDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("AppConnectionString")).EnableSensitiveDataLogging());
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddControllers();
         }

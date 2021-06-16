@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Ignore development json file
+BulkOperationsEFCoreBulkOperations/appsettings.Development.json

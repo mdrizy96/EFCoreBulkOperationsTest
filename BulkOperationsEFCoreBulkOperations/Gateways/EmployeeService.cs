@@ -1,10 +1,11 @@
 ﻿using BulkOperationsEFCoreBulkOperations.Infrastructure;
 using BulkOperationsEFCoreBulkOperations.Infrastructure.Entities;
-using EFCore.BulkExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Npgsql.Bulk;
+using Z.EntityFramework.Plus;
 
 namespace BulkOperationsEFCoreBulkOperations.Gateways
 {
@@ -35,7 +36,10 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
                     City = "City_" + i
                 });
             }
-            await _appDbContext.BulkInsertAsync(employees);
+
+            var uploader = new NpgsqlBulkUploader(_appDbContext);
+            await uploader.InsertAsync(employees);
+            // await _appDbContext.BulkInsertAsync(employees);
             _timeSpan = DateTime.Now - _start;
             return _timeSpan;
         }
@@ -46,19 +50,16 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
 
         public async Task<TimeSpan> UpdateBulkDataAsync()
         {
-            var employees = new List<Employee>();
             _start = DateTime.Now;
-            for (var i = 0; i < 100000; i++)
+            var employees = _appDbContext.Employees.ToList();
+            foreach (var employee in employees)
             {
-                employees.Add(new Employee()
-                {
-                    Id = (i + 1),
-                    Name = "Update Employee_" + i,
-                    Designation = "Update Designation_" + i,
-                    City = "Update City_" + i
-                });
+                employee.Name = "Update Employee_" + employee.Id;
+                employee.Designation = "Update Designation_" + employee.Id;
+                employee.City = "Update City_" + employee.Id;
             }
-            await _appDbContext.BulkUpdateAsync(employees);
+            var uploader = new NpgsqlBulkUploader(_appDbContext);
+            await uploader.UpdateAsync(employees);
             _timeSpan = DateTime.Now - _start;
             return _timeSpan;
         }
@@ -70,8 +71,12 @@ namespace BulkOperationsEFCoreBulkOperations.Gateways
         public async Task<TimeSpan> DeleteBulkDataAsync()
         {
             _start = DateTime.Now;
-            var employees = _appDbContext.Employees.ToList();
-            await _appDbContext.BulkDeleteAsync(employees);
+            /*var employees = _appDbContext.Employees.ToList();
+            await _appDbContext.BulkDeleteAsync(employees);*/
+            await _appDbContext.Employees.Where(x => x.Id < 1000000).DeleteAsync();
+
+            // Delete all employees
+            await _appDbContext.Employees.DeleteAsync();
             _timeSpan = DateTime.Now - _start;
             return _timeSpan;
         }
